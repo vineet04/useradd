@@ -1,22 +1,35 @@
 #! /bin/bash
+
 counter=0
 count=`cat users.list.txt | cut -d , -f 2,3,4 |wc -l`
 
-if [ -f ~./user_account.existsi ]
-then cat /dev/null > ~./user_account.exists
+
+Usage()
+{
+script=$(basename -a ~/users_add.sh)
+echo -e ""${script}" {arg1} is missing.
+         where {arg1}: groups to be added in sequence. E.g. group1,group2 etc."
+}
+
+if [ "$#" -lt "1" ]
+then
+ Usage
+ exit 
+fi
+
+if [ -f ~/user_account.exists ]
+then cat /dev/null > ~/user_account.exists
 fi
 
 while [ "${count}" -gt "${counter}" ]
 do
-#echo $count
 
 comment=`awk 'NR=='$count'{print $0}' users.list.txt`
-#echo $comment
 
 username=`awk 'NR=='$count'{print $0}' users.list.txt | cut -d , -f1`
-#echo $username
 
 useradd -c "${comment}" -d /home/"${username}" -m "${username}" 2>> user_account.exists
+usermod -G "${username}","${1}" "${username}"
 
 echo -e "\n Listing user account information for "${username}" created by script"
 grep  "${username}" /etc/passwd
