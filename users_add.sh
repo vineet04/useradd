@@ -11,7 +11,7 @@ echo -e ""${script}" {arg1} is missing.
          where {arg1}: groups to be added in sequence. E.g. group1,group2 etc."
 }
 
-if [ "$#" -lt "1" ]
+if [ "$#" -lt "1" ] ||  [ "$1" == "--help" ]
 then
  Usage
  exit 
