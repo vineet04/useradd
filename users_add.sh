@@ -17,9 +17,28 @@ then
  exit 
 fi
 
-if [ -f ~/user_account.exists ]
-then cat /dev/null > ~/user_account.exists
+#Check for any pre existing user_account file
+if [ -f ~/existing_userid ]
+then cat /dev/null > ~/existing_userid
 fi
+
+# Check if group exists
+
+grep -i "$1" /etc/group
+if [ "$?" != 0 ]
+then
+ #echo $?
+ Group=`echo "$1" | xargs -d ',' -n1`
+ for i in `echo "$Group"`
+ do
+ #echo $i
+  groupadd $i
+ done
+else
+ echo "Groups exists"
+ exit
+fi
+
 
 while [ "${count}" -gt "${counter}" ]
 do
@@ -28,8 +47,7 @@ comment=`awk 'NR=='$count'{print $0}' users.list.txt`
 
 username=`awk 'NR=='$count'{print $0}' users.list.txt | cut -d , -f1`
 
-useradd -c "${comment}" -d /home/"${username}" -m "${username}" 2>> user_account.exists
-usermod -G "${username}","${1}" "${username}"
+useradd -c "${comment}"  -G "${1}" -d /home/"${username}" -m "${username}" 2>> existing_userid
 
 echo -e "\n Listing user account information for "${username}" created by script"
 grep  "${username}" /etc/passwd
