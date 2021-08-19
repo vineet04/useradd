@@ -1,5 +1,5 @@
 # useradd
-Bash script to add user with comment
+Bash script to add user with comment and create group if it does not exist.
 
 Requirement:
 
